@@ -353,14 +353,27 @@ namespace ExcelHelpers
             }
             else // Typed cell
             {
-                return cell.DataType.Value switch
-                {
-                    Spreadsheet.CellValues.Boolean => int.Parse(cell.CellValue.Text),
-                    Spreadsheet.CellValues.Error => null,
-                    Spreadsheet.CellValues.SharedString => (string)_sharedStrings!.ElementAt(int.Parse(cell.CellValue.Text)).InnerText,
-                    Spreadsheet.CellValues.String => cell.CellValue.Text.Trim() == string.Empty ? null : cell.CellValue.Text,
-                    _ => null,
-                };
+                // Once, it was working as enum...
+                // return cell.DataType.Value switch
+                // {
+                //     Spreadsheet.CellValues.Boolean => int.Parse(cell.CellValue.Text),
+                //     Spreadsheet.CellValues.Error => null,
+                //     Spreadsheet.CellValues.SharedString => _sharedStrings!.ElementAt(int.Parse(cell.CellValue.Text)).InnerText,
+                //     Spreadsheet.CellValues.String => cell.CellValue.Text.Trim() == string.Empty ? null : cell.CellValue.Text,
+                //     _ => null,
+                // };
+                
+                if (cell.DataType.Value == Spreadsheet.CellValues.Boolean)
+                    return int.Parse(cell.CellValue.Text);
+                else if (cell.DataType.Value == Spreadsheet.CellValues.Error)
+                    return null;
+                else if (cell.DataType.Value == Spreadsheet.CellValues.SharedString)
+                    return _sharedStrings!.ElementAt(int.Parse(cell.CellValue.Text)).InnerText;
+                else if (cell.DataType.Value == Spreadsheet.CellValues.String)
+                    return cell.CellValue.Text.Trim() == string.Empty ? null : cell.CellValue.Text;
+                else
+                    return null;
+
             }
         }
 

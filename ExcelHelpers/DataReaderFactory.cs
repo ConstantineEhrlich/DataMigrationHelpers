@@ -262,7 +262,8 @@ namespace ExcelHelpers
 
 
         #region Not Supported Methods
-
+        
+        
         public IDataReader GetData(int i) => throw new NotSupportedException();
         public bool GetBoolean(int i) => throw new NotSupportedException();
         public byte GetByte(int i) => throw new NotSupportedException();
