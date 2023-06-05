@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using System.Text.Json;
 
-namespace ExcelHandlers
+namespace ExcelHelpers
 {
     public class DataReaderFactory : IDataReader
     {

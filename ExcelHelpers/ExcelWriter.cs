@@ -12,7 +12,7 @@ using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 
 
 
-namespace ExcelHandlers
+namespace ExcelHelpers
 {
     public class ExcelWriter: IDisposable
     {
@@ -94,7 +94,6 @@ namespace ExcelHandlers
         public void Dispose()
         {
             _document.Save();
-            _document.Close();
             _document.Dispose();
             GC.SuppressFinalize(this);
         }

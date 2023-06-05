@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 
-namespace ExcelHandlers
+namespace ExcelHelpers
 {
     public class ExcelIterator : IEnumerator<object?[]>, IEnumerable<object?[]>
     {

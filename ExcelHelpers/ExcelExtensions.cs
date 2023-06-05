@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExcelHandlers
+namespace ExcelHelpers
 {
     public static class ExcelExtensions
     {

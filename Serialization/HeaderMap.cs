@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExcelHelpers
+namespace Serialization
 {
-    public enum HeaderSource
+    public enum HeaderMap
     {
-        JsonMap,
-        DictMap,
-        FirstRow,
-        Noheader
+        ColumnHeaders,
+        JsonMap
     }
 }
