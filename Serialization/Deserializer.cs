@@ -11,8 +11,20 @@ using ExcelHelpers;
 
 namespace Serialization
 {
+    /// <summary>
+    /// This class provides methods to deserialize data record objects.
+    /// </summary>
     public static class Deserializer
     {
+        /// <summary>
+        /// Deserializes a data record into an object of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to be deserialized into.</typeparam>
+        /// <param name="reader">The data record to deserialize.</param>
+        /// <param name="headerMap">Specifies how the header map should be obtained.</param>
+        /// <param name="jsonMap">Specifies the json map, if required.</param>
+        /// <returns>An object of the specified type, populated with the data from the data record.</returns>
+        /// <exception cref="NullReferenceException">Thrown if a matching constructor for the target type can't be found.</exception>
         public static T Deserialize<T>(IDataRecord reader,
                                        HeaderMap headerMap = HeaderMap.ColumnHeaders,
                                        string jsonMap = "")
@@ -87,7 +99,11 @@ namespace Serialization
 
 
 
-
+        /// <summary>
+        /// Generates a map between the properties of the object and their indices in the data record.
+        /// </summary>
+        /// <param name="reader">The data record to create a map from.</param>
+        /// <returns>A dictionary where keys are property names and values are their respective indices.</returns>
         private static Dictionary<string, int> GetMapFromReader(IDataRecord reader)
         {
             if (reader.GetType() == typeof(DataReaderFactory))
@@ -108,6 +124,12 @@ namespace Serialization
         }
 
 
+        /// <summary>
+        /// Filters the provided map by properties of the specified type that can be set.
+        /// </summary>
+        /// <param name="readerMap">The map to filter.</param>
+        /// <param name="type">The type of the object to filter the map for.</param>
+        /// <returns>A dictionary where keys are property names and values are their respective indices.</returns>
         private static Dictionary<string, int> FilterByTypeProperties(Dictionary<string, int> readerMap, Type type)
         {
             string[] properties = type.GetProperties()

@@ -7,8 +7,17 @@ using System.Threading.Tasks;
 
 namespace Serialization
 {
+    /// <summary>
+    /// This class provides methods to serialize objects to dictionary or array.
+    /// </summary>
     public static class Serializer
     {
+        /// <summary>
+        /// Gets a dictionary where the keys are property names of the provided type and the values are their respective indices.
+        /// Only properties of serializable types are considered.
+        /// </summary>
+        /// <param name="type">The type of the object to get the property map for.</param>
+        /// <returns>A dictionary mapping property names to their indices.</returns>
         public static Dictionary<string,int> GetPropertyMap(Type type)
         {
             List<string> serializableTypes = new() { "DateTime", "String", "Int16", "Int32", "Int64", "Single", "Double", "Decimal" };
@@ -21,6 +30,12 @@ namespace Serialization
             return properties.Select((prop, index) => new { k = prop, v = index }).ToDictionary(kv => kv.k, kv => kv.v);
         }
 
+        /// <summary>
+        /// Serializes an object of the given type to an array.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to be serialized.</typeparam>
+        /// <param name="obj">The object to serialize.</param>
+        /// <returns>An array of object values representing the serialized object.</returns>
         public static object?[] SerializeToArray<T>(T obj)
         {
             Dictionary<string, int> map = GetPropertyMap(typeof(T));
@@ -37,6 +52,12 @@ namespace Serialization
         }
 
 
+        /// <summary>
+        /// Serializes an object of the given type to a dictionary.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to be serialized.</typeparam>
+        /// <param name="obj">The object to serialize.</param>
+        /// <returns>A dictionary where the keys are the property names and the values are their respective values from the serialized object.</returns>
         public static Dictionary<string, object?> SerializeToDict<T>(T obj)
         {
             Dictionary<string, object?> result = new();

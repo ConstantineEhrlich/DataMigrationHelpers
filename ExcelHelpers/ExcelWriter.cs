@@ -14,6 +14,9 @@ using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 
 namespace ExcelHelpers
 {
+    /// <summary>
+    /// ExcelWriter is a class for creating Excel files from data readers.
+    /// </summary>
     public class ExcelWriter: IDisposable
     {
         #region Fields
@@ -29,6 +32,10 @@ namespace ExcelHelpers
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the ExcelWriter class with the specified export path.
+        /// </summary>
+        /// <param name="exportPath">The path where the Excel file will be saved.</param>
         public ExcelWriter(string exportPath)
         {
             _exportPath = exportPath;
@@ -48,19 +55,21 @@ namespace ExcelHelpers
 
         #region Properties
 
+        /// <summary>
+        /// Gets the SpreadsheetDocument object representing the Excel document.
+        /// </summary>
         public SpreadsheetDocument Document { get => _document; }
 
         #endregion
 
 
-
-        #region Indexers
-        #endregion
-
-
-
         #region Public Methods
 
+        /// <summary>
+        /// Writes data from a IDataReader to a new worksheet in the Excel document.
+        /// </summary>
+        /// <param name="sheetName">The name of the new worksheet.</param>
+        /// <param name="data">The data to be written to the worksheet.</param>
         public void WriteData(string sheetName, IDataReader data)
         {
             WorksheetPart ws = AddWorksheet(_workbook, sheetName);

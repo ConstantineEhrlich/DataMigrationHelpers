@@ -11,6 +11,9 @@ using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 
 namespace ExcelHelpers
 {
+    /// <summary>
+    /// Represents an iterator over Excel rows.
+    /// </summary>
     public class ExcelIterator : IEnumerator<object?[]>, IEnumerable<object?[]>
     {
         #region Fields
@@ -33,12 +36,20 @@ namespace ExcelHelpers
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the ExcelIterator class using the specified SpreadsheetDocument.
+        /// </summary>
+        /// <param name="document">The <see cref="SpreadsheetDocument"/> object representing the Excel document to read from.</param>
         public ExcelIterator(SpreadsheetDocument document)
         {
             _document = document;
             LoadWorkbookData();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ExcelIterator class using the specified file path.
+        /// </summary>
+        /// <param name="excelFilePath">The path of the Excel file to read from.</param>
         public ExcelIterator(string excelFilePath) : this(SpreadsheetDocument.Open(excelFilePath, false))
         {
 
@@ -69,14 +80,18 @@ namespace ExcelHelpers
 
         public object?[] Current { get => RowToArray(RowsEnumerator.Current.Elements<Spreadsheet.Cell>().ToArray()); }
 
+        /// <summary>
+        /// Gets or sets the name of the worksheet to be read.
+        /// </summary>
         public string? WorksheetName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the minimum row index for iteration. Must be a valid Excel row index and not be greater than MaxRow.
+        /// </summary>
+        /// <exception cref="IndexOutOfRangeException">Thrown when the value is not a correct Excel row index or when it is greater than MaxRow.</exception>
         public uint MinRow
         {
-            get
-            {
-                return _fromRow;
-            }
+            get => _fromRow;
 
             set
             {
@@ -96,12 +111,13 @@ namespace ExcelHelpers
             }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum row index for iteration. Must be a valid Excel row index and not be less than MinRow.
+        /// </summary>
+        /// <exception cref="IndexOutOfRangeException">Thrown when the value is not a correct Excel row index or when it is less than MinRow.</exception>
         public uint MaxRow
         {
-            get
-            {
-                return _toRow;
-            }
+            get => _toRow;
 
             set
             {
@@ -120,6 +136,10 @@ namespace ExcelHelpers
             }
         }
 
+        /// <summary>
+        /// Gets or sets the minimum column index for iteration. Must be a valid Excel column index and not be greater than MaxCol.
+        /// </summary>
+        /// <exception cref="IndexOutOfRangeException">Thrown when the value is not a correct Excel column index or when it is greater than MaxCol.</exception>
         public uint MinCol
         {
             get
@@ -143,6 +163,10 @@ namespace ExcelHelpers
             }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum column index for iteration. Must be a valid Excel column index and not be less than MinCol.
+        /// </summary>
+        /// <exception cref="IndexOutOfRangeException">Thrown when the value is not a correct Excel column index or when it is less than MinCol.</exception>
         public uint MaxCol
         {
             get
@@ -166,7 +190,10 @@ namespace ExcelHelpers
             }
         }
 
-        public uint RowIndex { get => _rowsEnumerator?.Current.RowIndex!.Value ?? 0; }
+        /// <summary>
+        /// Gets the index of the current row.
+        /// </summary>
+        public uint RowIndex => _rowsEnumerator?.Current.RowIndex!.Value ?? 0;
 
         #endregion
 
