@@ -34,17 +34,6 @@ namespace UnitTests
             return table.CreateDataReader();
         }
 
-
-        [TestMethod]
-        public void ReadSampleData()
-        {
-            IDataReader reader = GetSampleData();
-            while (reader.Read())
-            {
-                
-            }
-        }
-
         [TestMethod]
         public void WriteToExcel()
         {
