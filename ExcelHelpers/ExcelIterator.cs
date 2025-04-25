@@ -18,6 +18,7 @@ namespace ExcelHelpers
     {
         #region Fields
 
+        private bool _use1904DateSystem = false;
         private IEnumerable<Spreadsheet.Row>? _rows;
         private IEnumerator<Spreadsheet.Row>? _rowsEnumerator;
 
@@ -259,6 +260,14 @@ namespace ExcelHelpers
 
             _sharedStrings = _workbook.GetPartsOfType<SharedStringTablePart>().FirstOrDefault()?.SharedStringTable
                 ?? throw new NullReferenceException($"Shared strings part is missing in the file");
+            
+            // Check if 1904 date system is in use
+            var wbProps = _workbook.Workbook.Descendants<Spreadsheet.WorkbookProperties>().FirstOrDefault();
+            if (wbProps is not null && wbProps.Date1904 is not null)
+                _use1904DateSystem = wbProps.Date1904.Value;
+            {
+                
+            }
 
         }
 
@@ -359,36 +368,37 @@ namespace ExcelHelpers
         /// <returns>Cell value or null if the cell is empty</returns>
         private object? GetCellValue(Spreadsheet.Cell cell)
         {
-            if (cell.CellValue == null) // cell not found
-            {
+            // If no value, return null
+            if (cell.CellValue == null)
                 return null;
-            }
-            else if (cell.DataType is null) // text or string or date
+
+            string cellText = cell.CellValue.Text;
+            if (cell.DataType is null)
             {
-                if (Decimal.TryParse(cell.CellValue.Text, out Decimal val))
+                // Check the style
+                var styleIndex = cell.StyleIndex?.Value;
+                if (styleIndex is not null && _workbook?.WorkbookStylesPart?.Stylesheet?.CellFormats is not null)
                 {
-                    return val;
+                    // Parse as date if style checks out
+                    var cellFormat = (Spreadsheet.CellFormat)_workbook.WorkbookStylesPart.Stylesheet.CellFormats.ElementAt((int)styleIndex);
+                    var formatId = cellFormat.NumberFormatId?.Value;
+                    if (IsDateFormat(formatId) && double.TryParse(cellText, out var numericDate))
+                    {
+                        double offset = _use1904DateSystem ? 1462 : 0;
+                        return DateTime.FromOADate(numericDate + offset);
+                    }
                 }
-                else if (cell.CellValue.Text.Trim() == string.Empty)
-                {
+                
+                if (decimal.TryParse(cell.CellValue.Text, out decimal decimalVal))
+                    return decimalVal;
+                
+                if (string.IsNullOrWhiteSpace(cell.CellValue.Text))
                     return null;
-                }
-                else
-                {
-                    return cell.CellValue.Text;
-                }
+                
+                return cell.CellValue.Text;
             }
             else // Typed cell
             {
-                // Once, it was working as enum...
-                // return cell.DataType.Value switch
-                // {
-                //     Spreadsheet.CellValues.Boolean => int.Parse(cell.CellValue.Text),
-                //     Spreadsheet.CellValues.Error => null,
-                //     Spreadsheet.CellValues.SharedString => _sharedStrings!.ElementAt(int.Parse(cell.CellValue.Text)).InnerText,
-                //     Spreadsheet.CellValues.String => cell.CellValue.Text.Trim() == string.Empty ? null : cell.CellValue.Text,
-                //     _ => null,
-                // };
                 
                 if (cell.DataType.Value == Spreadsheet.CellValues.Boolean)
                     return int.Parse(cell.CellValue.Text);
@@ -402,6 +412,15 @@ namespace ExcelHelpers
                     return null;
 
             }
+        }
+
+        private bool IsDateFormat(uint? numberFormatId)
+        {
+            if (numberFormatId == null)
+                return false;
+
+            var dateIds = new HashSet<uint>() { 14, 15, 16, 17, 18, 19, 20, 21, 22, 45, 46, 47 };
+            return dateIds.Contains(numberFormatId.Value);
         }
 
         #endregion
